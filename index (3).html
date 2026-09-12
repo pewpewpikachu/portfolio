@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shivangi — Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1720;
+    --ink-soft:#242030;
+    --ink-softer:#2c2738;
+    --paper:#f4efe6;
+    --paper-dim:#c9c3b8;
+    --gold:#e8b04b;
+    --teal:#3fbfae;
+    --line: rgba(244,239,230,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    line-height:1.55;
+  }
+  .wrap{
+    max-width:1040px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+  h1,h2,h3{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.01em;
+    margin:0;
+  }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding:96px 0 0 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-name{
+    font-size:clamp(64px,14vw,148px);
+    line-height:0.86;
+    color:var(--paper);
+  }
+  .hero-name span{
+    color:var(--gold);
+  }
+  .hero-role{
+    font-size:15px;
+    text-transform:uppercase;
+    letter-spacing:0.16em;
+    color:var(--teal);
+    font-weight:600;
+    margin-top:18px;
+  }
+  .hero-tagline{
+    max-width:520px;
+    font-size:19px;
+    color:var(--paper-dim);
+    margin-top:20px;
+  }
+
+  /* scrubber bar */
+  .scrubber{
+    margin-top:64px;
+    padding:18px 0 22px 0;
+    border-top:1px solid var(--line);
+  }
+  .scrubber-track{
+    position:relative;
+    height:3px;
+    background:var(--ink-softer);
+    border-radius:2px;
+    margin-bottom:10px;
+  }
+  .scrubber-fill{
+    position:absolute;
+    left:0;top:0;bottom:0;
+    width:34%;
+    background:var(--gold);
+    border-radius:2px;
+  }
+  .scrubber-head{
+    position:absolute;
+    top:50%;
+    left:34%;
+    width:11px;height:11px;
+    background:var(--gold);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 0 4px rgba(232,176,75,0.18);
+  }
+  .scrubber-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:var(--paper-dim);
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- SECTION HEADINGS ---------- */
+  .section{
+    padding:76px 0;
+    border-top:1px solid var(--line);
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:44px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .section-head h2{
+    font-size:clamp(34px,5vw,52px);
+    color:var(--paper);
+  }
+  .section-head .count{
+    font-size:14px;
+    color:var(--paper-dim);
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-text{
+    font-size:19px;
+    max-width:640px;
+    color:var(--paper-dim);
+  }
+  .about-text strong{
+    color:var(--paper);
+    font-weight:600;
+  }
+
+  /* ---------- SKILLS TIMELINE ---------- */
+  .timeline{
+    position:relative;
+    padding:60px 0 30px 0;
+  }
+  .timeline-line{
+    position:absolute;
+    left:0;right:0;
+    top:50%;
+    height:1px;
+    background:var(--line);
+  }
+  .timeline-track{
+    display:flex;
+    justify-content:space-between;
+    position:relative;
+  }
+  .kf{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:12.5%;
+    min-width:96px;
+  }
+  .kf.up{ transform:translateY(-34px); }
+  .kf.down{ transform:translateY(34px); }
+  .kf-diamond{
+    width:14px;height:14px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    margin:0 0 12px 0;
+    flex-shrink:0;
+  }
+  .kf.down .kf-diamond{
+    order:2;
+    margin:12px 0 0 0;
+    background:var(--teal);
+  }
+  .kf-label{
+    font-size:13px;
+    text-align:center;
+    color:var(--paper-dim);
+    line-height:1.3;
+  }
+  .kf.down .kf-label{ order:1; }
+
+  @media (max-width:760px){
+    .timeline-track{ flex-wrap:wrap; row-gap:40px; }
+    .kf{ width:33%; transform:none !important; }
+    .kf-diamond{ order:0 !important; margin:0 0 10px 0 !important; }
+    .kf-label{ order:1 !important; }
+    .timeline-line{ display:none; }
+  }
+
+  /* ---------- WORK ---------- */
+  .clip{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:40px;
+    align-items:center;
+    padding:44px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .clip:last-child{ border-bottom:none; }
+  .clip.reverse{ grid-template-columns:1fr 1.1fr; }
+  .clip.reverse .clip-media{ order:2; }
+  .clip.reverse .clip-info{ order:1; }
+
+  .clip-media{
+    background:#000;
+    border-radius:4px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .clip-media video, .clip-media iframe{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:16/9;
+    background:#000;
+  }
+  .clip-media.vertical video{
+    aspect-ratio:9/16;
+    max-height:520px;
+    margin:0 auto;
+    width:auto;
+  }
+  .clip-media.vertical{
+    display:flex;
+    justify-content:center;
+  }
+
+  .clip-info h3{
+    font-size:30px;
+    color:var(--paper);
+    margin-bottom:10px;
+  }
+  .clip-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 16px;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--teal);
+    margin-bottom:16px;
+    font-weight:600;
+  }
+  .clip-desc{
+    color:var(--paper-dim);
+    font-size:15.5px;
+    max-width:420px;
+  }
+
+  @media (max-width:760px){
+    .clip, .clip.reverse{
+      grid-template-columns:1fr;
+    }
+    .clip.reverse .clip-media, .clip.reverse .clip-info{ order:initial; }
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact{
+    text-align:left;
+  }
+  .contact h2{
+    font-size:clamp(44px,8vw,84px);
+    max-width:760px;
+    color:var(--paper);
+  }
+  .contact-list{
+    margin-top:36px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .contact-row{
+    display:flex;
+    gap:18px;
+    align-items:baseline;
+    font-size:18px;
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+  .contact-row .label{
+    width:110px;
+    flex-shrink:0;
+    color:var(--paper-dim);
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+  }
+  .contact-row a{
+    color:var(--paper);
+    text-decoration:none;
+    border-bottom:1px solid var(--gold);
+  }
+  .contact-row a:hover{ color:var(--gold); }
+
+  footer{
+    padding:36px 0 48px 0;
+    color:var(--paper-dim);
+    font-size:13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <h1 class="hero-name">SHIVANGI<span>.</span></h1>
+    <div class="hero-role">Video Editor &amp; Motion Designer</div>
+    <p class="hero-tagline">I cut footage into pace — from fast, caption-driven news reels to slow, colour-graded cinematic film. Premiere Pro, DaVinci Resolve and After-Effects-style keyframing, start to finish.</p>
+
+    <div class="scrubber">
+      <div class="scrubber-track">
+        <div class="scrubber-fill"></div>
+        <div class="scrubber-head"></div>
+      </div>
+      <div class="scrubber-labels">
+        <span>EDIT REEL</span>
+        <span>02:47 / 07:55</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="about">
+    <div class="section-head"><h2>About</h2></div>
+    <p class="about-text">I'm <strong>Shivangi</strong>, a video editor working across <strong>Premiere Pro, DaVinci Resolve, Filmora, Photoshop and Illustrator</strong>. My work spans two lanes: quick-turnaround <strong>social and news edits</strong> built for retention and readability, and <strong>cinematic, colour-graded films</strong> built for mood and pacing. I also build <strong>motion graphics</strong> — both by hand-placing keyframes and by working AI motion tools into the timeline where they speed things up without flattening the look.</p>
+  </section>
+
+  <section class="section" id="skills">
+    <div class="section-head">
+      <h2>Tools &amp; Craft</h2>
+      <span class="count">8 tracks</span>
+    </div>
+    <div class="timeline">
+      <div class="timeline-line"></div>
+      <div class="timeline-track">
+        <div class="kf up">
+          <div class="kf-diamond"></div>
+          <div class="kf-label">Premiere<br>Pro</div>
+        </div>
+        <div class="kf down">
+          <div class="kf-diamond"></div>
+          <div class="kf-label">DaVinci<br>Resolve</div>
+        </div>
+        <div class="kf up">
+          <div class="kf-diamond"></div>
+          <div class="kf-label">Filmora</div>
+        </div>
+        <div class="kf down">
+          <div class="kf-diamond"></div>
+          <div class="kf-label">Audio<br>Editing</div>
+        </div>
+        <div class="kf up">
+          <div class="kf-diamond"></div>
+          <div class="kf-label">Motion<br>Graphics</div>
+        </div>
+        <div class="kf down">
+          <div class="kf-diamond"></div>
+          <div class="kf-label">AI-Assisted<br>Keyframing</div>
+        </div>
+        <div class="kf up">
+          <div class="kf-diamond"></div>
+          <div class="kf-label">Photoshop<br>&amp; Illustrator</div>
+        </div>
+        <div class="kf down">
+          <div class="kf-diamond"></div>
+          <div class="kf-label">Canva</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="work">
+    <div class="section-head">
+      <h2>Selected Work</h2>
+      <span class="count">3 pieces</span>
+    </div>
+
+    <div class="clip">
+      <div class="clip-media vertical">
+        <video controls preload="metadata" src="paper-leak.mp4"></video>
+      </div>
+      <div class="clip-info">
+        <h3>Jawab Denge IAS</h3>
+        <div class="clip-meta">
+          <span>Vertical · 9:16</span>
+          <span>News / Social Reel</span>
+        </div>
+        <p class="clip-desc">A fast-paced news edit on the NEET paper-leak protests, cut for mobile feeds — bold synced captions, quick beat changes and archival news clips stitched into one continuous story.</p>
+      </div>
+    </div>
+
+    <div class="clip reverse">
+      <div class="clip-media">
+        <video controls preload="metadata" src="wedding-film.mp4"></video>
+      </div>
+      <div class="clip-info">
+        <h3>Pre-Wedding Film</h3>
+        <div class="clip-meta">
+          <span>Widescreen · 16:9</span>
+          <span>Cinematic / Colour Grade</span>
+        </div>
+        <p class="clip-desc">A slower, colour-graded cut built around natural light and candid movement — pacing and grade carry the romance instead of cuts or captions.</p>
+      </div>
+    </div>
+
+    <div class="clip">
+      <div class="clip-media">
+        <iframe src="https://www.youtube.com/embed/3Yb4v7Oe2oM" title="Featured edit" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="clip-info">
+        <h3>Featured Edit</h3>
+        <div class="clip-meta">
+          <span>YouTube</span>
+        </div>
+        <p class="clip-desc">Published edit — see it live on YouTube.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="section contact" id="contact">
+    <h2>Let's cut<br>something together.</h2>
+    <div class="contact-list">
+      <div class="contact-row">
+        <span class="label">Phone</span>
+        <a href="tel:+916202185356">+91 62021 85356</a>
+      </div>
+      <div class="contact-row">
+        <span class="label">Email</span>
+        <a href="mailto:your.email@example.com">your.email@example.com</a>
+      </div>
+      <div class="contact-row">
+        <span class="label">Instagram</span>
+        <a href="#">@your.handle</a>
+      </div>
+      <div class="contact-row">
+        <span class="label">YouTube</span>
+        <a href="https://www.youtube.com/watch?v=3Yb4v7Oe2oM">your channel</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>Shivangi — Video Editing &amp; Motion Design</footer>
+
+</div>
+
+</body>
+</html>
